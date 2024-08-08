@@ -1,4 +1,6 @@
-﻿namespace Credo.Domain.Entities;
+﻿using Credo.Domain.ValueObjects;
+
+namespace Credo.Domain.Entities;
 
 public class User
 {
@@ -8,4 +10,5 @@ public class User
     required public string PersonalNumber { get; set; }
     required public DateOnly BornDate { get; set; }
     required public string Password { get; set; }
+    public UserRole Role { get; set; } = UserRole.Customer;
 }

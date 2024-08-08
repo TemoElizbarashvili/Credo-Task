@@ -9,5 +9,11 @@ public class LoanApplication
     public decimal Amount { get; set; }
     required public string Currency { get; set; }
     public int Period { get; set; } // Period in Months
-    public LoanStatus LoanStatus { get; set; }
+    public LoanStatus Status { get; set; }
+
+
+    public void UpdateStatus(LoanStatus newStatus)
+    {
+        Status = newStatus;
+    }
 }

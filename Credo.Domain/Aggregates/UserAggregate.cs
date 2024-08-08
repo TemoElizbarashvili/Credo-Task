@@ -16,5 +16,4 @@ public class UserAggregate
     {
         await _userRepository.AddAsync(user);
     }
-
 }
