@@ -16,7 +16,7 @@ public class UserRepository : IUserRepository
     public async Task AddAsync(User user)
         => await _context.Users.AddAsync(user);
 
-    public async Task<User> GetByIdAsync(Guid id)
+    public async Task<User> GetByIdAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
         ArgumentNullException.ThrowIfNull(nameof(user));
