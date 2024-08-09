@@ -2,8 +2,8 @@
 
 public class RabbitMqConfiguration
 {
-    required public string HostName { get; set; }
-    required public string QueueName { get; set; }
-    required public string ExchangeName { get; set; }
-    required public string RoutingKey { get; set; }
+    public required string HostName { get; set; }
+    public required string QueueName { get; set; }
+    public required string ExchangeName { get; set; }
+    public required string RoutingKey { get; set; }
 }

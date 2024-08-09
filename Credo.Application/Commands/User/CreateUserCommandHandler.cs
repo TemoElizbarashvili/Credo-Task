@@ -22,7 +22,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
         }
         catch(Exception ex)
         {
-            Log.Error($"Exception Happend while creating User. Message: {ex.Message}");
+            Log.Error($"Exception Happened while creating User. Message: {ex.Message}");
         }
 
         return request.User.Id;

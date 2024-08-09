@@ -1,6 +1,6 @@
 ﻿using Credo.Domain.Entities;
 
-namespace Credo.Domain.Repositories;
+namespace Credo.Domain.RepositoriesContracts;
 
 public interface IUserRepository
 {

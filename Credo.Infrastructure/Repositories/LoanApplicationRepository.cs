@@ -1,5 +1,5 @@
 ﻿using Credo.Domain.Entities;
-using Credo.Domain.Repositories;
+using Credo.Domain.RepositoriesContracts;
 using Credo.Infrastructure.DB;
 
 namespace Credo.Infrastructure.Repositories;
@@ -16,7 +16,7 @@ public class LoanApplicationRepository : ILoanApplicationRepository
     public async Task AddAsync(LoanApplication loanApplication)
         => await _context.AddAsync(loanApplication);
 
-    public async Task<LoanApplication> GetByIdAsync(int id)
+    public async Task<LoanApplication?> GetByIdAsync(int id)
     {
         var application = await _context.LoanApplications.FindAsync(id);
         ArgumentNullException.ThrowIfNull(application, nameof(application));

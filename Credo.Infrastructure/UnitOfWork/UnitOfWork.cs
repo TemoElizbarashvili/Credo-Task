@@ -1,4 +1,4 @@
-﻿using Credo.Domain.Repositories;
+﻿using Credo.Domain.RepositoriesContracts;
 using Credo.Infrastructure.DB;
 using Credo.Infrastructure.Repositories;
 

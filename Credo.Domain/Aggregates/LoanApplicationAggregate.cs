@@ -1,5 +1,5 @@
 ﻿using Credo.Domain.Entities;
-using Credo.Domain.Repositories;
+using Credo.Domain.RepositoriesContracts;
 using Credo.Domain.ValueObjects;
 
 namespace Credo.Domain.Aggregates;
@@ -13,7 +13,7 @@ public class LoanApplicationAggregate
         _loanApplicationRepository = loanApplicationRepository;
     }
 
-    public async Task SubmitLoanApplicationAsync(LoanApplication loanApplication)
+    public async Task CreateLoanApplicationAsync(LoanApplication loanApplication)
         => await _loanApplicationRepository.AddAsync(loanApplication);
 
     public async Task UpdateLoanApplicationStatusAsync(int loanApplicationId, LoanStatus newStatus)

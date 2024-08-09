@@ -1,6 +1,5 @@
 ﻿using Credo.Infrastructure.UnitOfWork;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace Credo.Application.Queries.User;
@@ -24,7 +23,7 @@ public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, Credo.D
         }
         catch (Exception ex)
         {
-            Log.Error($"Exception Happend while getting User. User Id: {request.Id}, Message: {ex.Message}");
+            Log.Error($"Exception Happened while getting User. User Id: {request.Id}, Message: {ex.Message}");
         }
         return null;
     }

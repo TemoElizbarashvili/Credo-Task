@@ -1,5 +1,5 @@
 ﻿using Credo.Domain.Entities;
-using Credo.Domain.Repositories;
+using Credo.Domain.RepositoriesContracts;
 
 namespace Credo.Domain.Aggregates;
 

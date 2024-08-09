@@ -7,7 +7,7 @@ public class LoanApplication
     public int Id { get; set; }
     public LoanType LoanType { get; set; }
     public decimal Amount { get; set; }
-    required public string Currency { get; set; }
+    public required string Currency { get; set; }
     public int Period { get; set; } // Period in Months
     public LoanStatus Status { get; set; }
 

@@ -14,7 +14,7 @@ public class LoanApplicationsService
     }
 
     public async Task SubmitLoanApplicationAsync(LoanApplication loanApplication)
-        => await _loanApplicationAggregate.SubmitLoanApplicationAsync(loanApplication);
+        => await _loanApplicationAggregate.CreateLoanApplicationAsync(loanApplication);
 
     public async Task ProcessLoanApplicationAsync(int loanApplicationId, LoanStatus newStatus)
         => await _loanApplicationAggregate.UpdateLoanApplicationStatusAsync(loanApplicationId, newStatus);
