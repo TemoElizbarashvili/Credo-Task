@@ -14,4 +14,10 @@ public class UsersService
 
     public async Task RegisterUserAsync(User user)
         => await _userAggragete.RegisterUserAsync(user);
+
+    public async Task<User?> GetByIdAsync(int id)
+        => await _userAggragete.GetByIdAsync(id);
+
+    public async Task<User?> GetByUserNameAsync(string userName)
+        => await _userAggragete.GetByUserNameAsync(userName);
 }

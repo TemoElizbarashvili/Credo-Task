@@ -1,4 +1,5 @@
-﻿using Credo.Domain.Entities;
+﻿using System.Runtime.CompilerServices;
+using Credo.Domain.Entities;
 using Credo.Domain.RepositoriesContracts;
 
 namespace Credo.Domain.Aggregates;
@@ -16,4 +17,10 @@ public class UserAggregate
     {
         await _userRepository.AddAsync(user);
     }
+
+    public async Task<User?> GetByIdAsync(int id)
+        => await _userRepository.GetByIdAsync(id);
+
+    public async Task<User?> GetByUserNameAsync(string userName)
+        => await _userRepository.GetByUserNameAsync(userName);
 }

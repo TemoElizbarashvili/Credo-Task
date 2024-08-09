@@ -1,10 +1,11 @@
 ﻿using Credo.Domain.RepositoriesContracts;
+using Credo.Domain.Services;
 
 namespace Credo.Infrastructure.UnitOfWork;
 
 public interface IUnitOfWork : IDisposable
 {
-    IUserRepository Users { get; }
-    ILoanApplicationRepository LoanApplications { get; }
+    UsersService UsersService { get; }
+    LoanApplicationsService LoanApplicationsService { get; }
     Task<int> CompleteAsync();
 }

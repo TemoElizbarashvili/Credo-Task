@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Credo.API.Modules.User.Models;
-using Credo.Application.Queries.User;
+using Credo.Application.Modules.User.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +21,7 @@ public class UsersController : ControllerBase
     [HttpGet("{id:int}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<UserDto>> GetById([FromRoute]int id)
+    public async Task<ActionResult<UserDto>> GetById([FromRoute] int id)
     {
         var user = await _mediator.Send(new GetUserByIdQuery { Id = id });
 

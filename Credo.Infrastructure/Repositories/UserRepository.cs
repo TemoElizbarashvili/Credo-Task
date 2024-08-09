@@ -1,6 +1,8 @@
-﻿using Credo.Domain.Entities;
+﻿using System.Security.Cryptography.X509Certificates;
+using Credo.Domain.Entities;
 using Credo.Domain.RepositoriesContracts;
 using Credo.Infrastructure.DB;
+using Microsoft.EntityFrameworkCore;
 
 namespace Credo.Infrastructure.Repositories;
 
@@ -16,10 +18,16 @@ public class UserRepository : IUserRepository
     public async Task AddAsync(User user)
         => await _context.Users.AddAsync(user);
 
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User?> GetByIdAsync(int id)
     {
         var user = await _context.Users.FindAsync(id);
-        ArgumentNullException.ThrowIfNull(nameof(user));
         return user!;
+    }
+
+    public async Task<User?> GetByUserNameAsync(string userName)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName.Equals(userName));
+
+        return user;
     }
 }

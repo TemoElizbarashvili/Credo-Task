@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Credo.API.Modules.User.Models;
-using System.Runtime.CompilerServices;
+using Credo.API.Modules.Auth.Models;
+using Credo.Domain.Entities;
 
 namespace Credo.API.Profiles;
 
@@ -9,6 +10,7 @@ public class MappingProfile : Profile
     public MappingProfile() 
     {
         // Users Profile
-        CreateMap<Domain.Entities.User, UserDto>();
+        CreateMap<User, UserDto>();
+        CreateMap<UserRegisterDto, User>();
     }
 }

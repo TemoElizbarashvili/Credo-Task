@@ -1,4 +1,5 @@
 ﻿using Credo.Domain.RepositoriesContracts;
+using Credo.Domain.Services;
 using Credo.Infrastructure.DB;
 using Credo.Infrastructure.Repositories;
 
@@ -7,14 +8,14 @@ namespace Credo.Infrastructure.UnitOfWork;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _context;
-    public IUserRepository Users { get; }
-    public ILoanApplicationRepository LoanApplications { get; }
+    public UsersService UsersService { get; }
+    public LoanApplicationsService LoanApplicationsService { get; }
 
-    public UnitOfWork(ApplicationDbContext context)
+    public UnitOfWork(ApplicationDbContext context, UsersService usersService, LoanApplicationsService loanApplicationsService)
     {
         _context = context;
-        Users = new UserRepository(context);
-        LoanApplications = new LoanApplicationRepository(context);
+        UsersService = usersService;
+        LoanApplicationsService = loanApplicationsService;
     }
 
     public async Task<int> CompleteAsync()
