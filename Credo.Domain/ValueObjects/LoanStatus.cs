@@ -3,7 +3,7 @@
 public enum LoanStatus
 {
     InProgress,
-    Sended,
+    Sent,
     Submitted,
     Declined
 }

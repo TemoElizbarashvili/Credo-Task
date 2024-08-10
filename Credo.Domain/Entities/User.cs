@@ -8,9 +8,9 @@ public class User
     public int Id { get; set; }
     [MinLength(3), MaxLength(20)]
     public required string UserName { get; set; }
-    [MinLength(3), MaxLength(20)]
+    [MaxLength(20)]
     public required string FirstName { get; set; }
-    [MinLength(3), MaxLength(30)]
+    [MaxLength(30)]
     public required string LastName { get; set; }
     [StringLength(11)]
     public required string PersonalNumber { get; set; }

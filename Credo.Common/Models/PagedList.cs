@@ -1,4 +1,4 @@
-﻿namespace Credo.Infrastructure.Models;
+﻿namespace Credo.Common.Models;
 
 public class PagedList<T>
 {

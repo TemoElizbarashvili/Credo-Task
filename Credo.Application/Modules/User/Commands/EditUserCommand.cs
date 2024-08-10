@@ -2,7 +2,7 @@
 
 namespace Credo.Application.Modules.User.Commands;
 
-public class CreateUserCommand : IRequest<int>
+public class EditUserCommand : IRequest
 {
     public required Domain.Entities.User User { get; set; }
 }

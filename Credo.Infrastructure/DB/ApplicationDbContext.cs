@@ -21,5 +21,9 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(u => u.PersonalNumber)
             .IsUnique();
+
+        modelBuilder.Entity<LoanApplication>()
+            .Property(l => l.Amount)
+            .HasPrecision(18, 2);
     }
 }

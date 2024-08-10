@@ -1,5 +1,4 @@
-﻿using Credo.Domain.RepositoriesContracts;
-using Credo.Domain.Services;
+﻿using Credo.Domain.Services;
 
 namespace Credo.Infrastructure.UnitOfWork;
 

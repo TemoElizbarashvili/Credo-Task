@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Credo.API.Modules.Auth.Models;
-using Credo.Application.Modules.User.Queries;
+﻿using Credo.API.Modules.Auth.Models;
 using Credo.Domain.RepositoriesContracts;
 using FluentValidation;
 
@@ -23,10 +21,20 @@ public class UserRegisterDtoValidator : AbstractValidator<UserRegisterDto>
 
         RuleFor(x => x.DateOfBirth)
             .NotEmpty().WithMessage("Birth date is required.")
-            .LessThan(DateTime.Now).WithMessage("Birth date can not be more than present");
+            .LessThan(DateTime.Now.AddYears(-2)).WithMessage("Birth date can not be more than present");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
             .MinimumLength(8).WithMessage("Password must be contain at least 8 character");
+
+        RuleFor(x => x.FirstName)
+            .NotEmpty()
+            .NotNull().WithMessage("First name field is required.")
+            .MaximumLength(20).WithMessage("First name can not be longer than 20 characters.");
+
+        RuleFor(x => x.LastName)
+            .NotEmpty()
+            .NotNull().WithMessage("Last name field is required.")
+            .MaximumLength(30).WithMessage("Last name can not be longer than 30 characters.");
     }
 }
