@@ -15,14 +15,11 @@ using Credo.API.Fluent;
 using Credo.Domain.Aggregates;
 using Credo.Domain.RepositoriesContracts;
 using Credo.Infrastructure.Repositories;
-using System;
-using Credo.API.Modules.Auth.Models;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((context, loggerConfig) =>
-    loggerConfig.ReadFrom.Configuration(context.Configuration)); 
+    loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
