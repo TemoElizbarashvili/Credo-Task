@@ -18,4 +18,5 @@ public class User
     [MinLength(8), MaxLength(150)]
     public required string Password { get; set; }
     public string Role { get; set; } = UserRole.Customer.ToString();
+    public bool IsDeleted { get; set; } = false;
 }

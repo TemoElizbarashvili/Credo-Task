@@ -53,12 +53,14 @@ builder.Services.AddAuthentication(x =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining(typeof(UserRegisterDtoValidator));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetAssembly(typeof(GetUserByIdQueryHandler))!));
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(Assembly.GetAssembly(typeof(GetUserByIdQueryHandler))!);
+
+    cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+});
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<UsersService>();
-builder.Services.AddScoped<UserAggregate>();
 builder.Services.AddScoped<LoanApplicationsService>();
 builder.Services.AddScoped<LoanApplicationAggregate>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -91,6 +93,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

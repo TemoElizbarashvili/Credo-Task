@@ -8,18 +8,16 @@ namespace Credo.Infrastructure.UnitOfWork;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _context;
-    public UsersService UsersService { get; }
     public LoanApplicationsService LoanApplicationsService { get; }
 
-    public UnitOfWork(ApplicationDbContext context, UsersService usersService, LoanApplicationsService loanApplicationsService)
+    public UnitOfWork(ApplicationDbContext context, LoanApplicationsService loanApplicationsService)
     {
         _context = context;
-        UsersService = usersService;
         LoanApplicationsService = loanApplicationsService;
     }
 
-    public async Task<int> CompleteAsync()
-        => await _context.SaveChangesAsync();
+    public async Task<int> CompleteAsync(CancellationToken cancellationToken)
+        => await _context.SaveChangesAsync(cancellationToken);
 
     public void Dispose()
         => _context.Dispose();

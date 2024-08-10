@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credo.API", "Credo.API.csproj", "{6F1FF464-DA07-4F41-8358-DA62EF6E38BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credo.API", "Credo.API.csproj", "{6F1FF464-DA07-4F41-8358-DA62EF6E38BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credo.Domain", "..\Credo.Domain\Credo.Domain.csproj", "{004FDCC2-F57C-4A65-B32E-E359AE639543}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credo.Domain", "..\Credo.Domain\Credo.Domain.csproj", "{004FDCC2-F57C-4A65-B32E-E359AE639543}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credo.Infrastructure", "..\Credo.Infrastructure\Credo.Infrastructure.csproj", "{1CF5C63C-BC96-4079-AC6A-49130D61C3B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credo.Infrastructure", "..\Credo.Infrastructure\Credo.Infrastructure.csproj", "{1CF5C63C-BC96-4079-AC6A-49130D61C3B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credo.Application", "..\Credo.Application\Credo.Application.csproj", "{B24A0C61-8592-4210-8D12-C9CEA4447CC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Credo.Application", "..\Credo.Application\Credo.Application.csproj", "{B24A0C61-8592-4210-8D12-C9CEA4447CC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Credo.Common", "..\Credo.Common\Credo.Common.csproj", "{7C52A25C-84E6-4D7C-B0CA-037EDD7FB0CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B24A0C61-8592-4210-8D12-C9CEA4447CC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B24A0C61-8592-4210-8D12-C9CEA4447CC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B24A0C61-8592-4210-8D12-C9CEA4447CC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C52A25C-84E6-4D7C-B0CA-037EDD7FB0CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C52A25C-84E6-4D7C-B0CA-037EDD7FB0CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C52A25C-84E6-4D7C-B0CA-037EDD7FB0CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C52A25C-84E6-4D7C-B0CA-037EDD7FB0CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

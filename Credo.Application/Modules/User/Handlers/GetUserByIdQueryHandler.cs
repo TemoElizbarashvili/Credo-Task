@@ -1,21 +1,20 @@
-﻿using Credo.Application.Modules.Shared;
-using Credo.Application.Modules.User.Queries;
-using Credo.Infrastructure.UnitOfWork;
+﻿using Credo.Application.Modules.User.Queries;
+using Credo.Domain.RepositoriesContracts;
 using MediatR;
 using Serilog;
 
 namespace Credo.Application.Modules.User.Handlers;
 
-public class GetUserByIdQueryHandler : BaseHandler, IRequestHandler<GetUserByIdQuery, Domain.Entities.User?>
-{
 
-    public GetUserByIdQueryHandler(IUnitOfWork unitOfWork) : base(unitOfWork) { }
+public class GetUserByIdQueryHandler : UserRequestsHandlerBase, IRequestHandler<GetUserByIdQuery, Domain.Entities.User?>
+{
+    public GetUserByIdQueryHandler(IUserRepository userRepository) : base(userRepository) { }
 
     public async Task<Domain.Entities.User?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _unitOfWork.UsersService.GetByIdAsync(request.Id);
+            var user = await _userRepository.GetByIdAsync(request.Id);
 
             return user;
         }

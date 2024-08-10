@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using Credo.API.Helpers;
 using Credo.API.Modules.Auth.Models;
 using Credo.Application.Modules.User.Commands;
 using Credo.Application.Modules.User.Queries;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,12 +12,12 @@ namespace Credo.API.Modules.Auth;
 [Microsoft.AspNetCore.Components.Route("Auth")]
 public class AuthController : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly ISender _sender;
     private readonly IMapper _mapper;
 
-    public AuthController(IMediator mediator, IMapper mapper)
+    public AuthController(ISender sender, IMapper mapper)
     {
-        _mediator = mediator;
+        _sender = sender;
         _mapper = mapper;
     }
 
@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<ActionResult<string>> Login([FromBody] UserLoginDto login, [FromServices] IConfiguration config)
     {
-        var user = await _mediator.Send(new GetUserByUserNameQuery { UserName = login.UserName });
+        var user = await _sender.Send(new GetUserByUserNameQuery { UserName = login.UserName });
         if (user is null)
         {
             return BadRequest("UserName or password is invalid!");
@@ -44,17 +44,14 @@ public class AuthController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(409)]
-    public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto)
+    public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto, [FromServices] IValidator<UserRegisterDto> validator)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+
         var user = _mapper.Map<Domain.Entities.User>(userDto);
         user.Password = await AuthHelper.HashPasswordAsync(user.Password);
         try
         {
-            await _mediator.Send(new CreateUserCommand { User = user });
+            await _sender.Send(new CreateUserCommand { User = user });
         }
         catch (Exception ex)
         {

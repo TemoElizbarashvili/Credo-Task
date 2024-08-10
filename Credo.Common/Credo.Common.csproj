@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Credo.Common\Credo.Common.csproj" />
-  </ItemGroup>
-
 </Project>

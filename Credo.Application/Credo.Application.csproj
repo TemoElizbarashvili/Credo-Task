@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Credo.Infrastructure\Credo.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\Shared\" />
+  </ItemGroup>
+
 </Project>
