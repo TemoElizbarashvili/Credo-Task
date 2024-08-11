@@ -2,7 +2,7 @@
 using Credo.Domain.RepositoriesContracts;
 using FluentValidation;
 
-namespace Credo.API.Fluent;
+namespace Credo.API.Modules.User.Validators;
 
 public class EditUserDtoValidator : AbstractValidator<EditUserDto>
 {

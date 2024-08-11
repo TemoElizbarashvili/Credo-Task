@@ -1,7 +1,7 @@
 ﻿using Credo.API.Modules.Auth.Models;
 using FluentValidation;
 
-namespace Credo.API.Fluent;
+namespace Credo.API.Modules.Auth.Validatos;
 
 public class ChangePasswordDtoValidator : AbstractValidator<ChangePasswordDto>
 {

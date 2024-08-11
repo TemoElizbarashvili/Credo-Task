@@ -11,6 +11,10 @@ public class LoanApplication
     public int Period { get; set; } // Period in Months
     public LoanStatus Status { get; set; }
 
+    //Relations
+
+    public int UserId { get; set; }
+    public required User User { get; set; }
 
     public void UpdateStatus(LoanStatus newStatus)
     {

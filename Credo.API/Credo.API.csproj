@@ -38,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\LoanApplications\" />
     <Folder Include="logs\" />
   </ItemGroup>
 

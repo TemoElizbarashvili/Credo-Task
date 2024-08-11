@@ -51,9 +51,12 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto, [FromServices] IValidator<UserRegisterDto> validator)
     {
         // Only Manager can Add user with Role "Manager
-        if (userDto.Role == UserRole.Manager && !User.IsInRole("Manager"))
+        if (userDto.Role == UserRole.Manager)
         {
-            return Forbid();
+            if (!User.IsInRole("Manager"))
+            {
+                return Forbid();
+            }
         }
 
         var validationResult = await validator.ValidateAsync(userDto);

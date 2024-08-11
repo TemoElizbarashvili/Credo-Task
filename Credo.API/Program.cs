@@ -6,15 +6,18 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Reflection;
 using System.Text;
+using Credo.API.Helpers;
 using Credo.Domain.Services;
 using Credo.Application.Modules.User.Handlers;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
-using Credo.API.Fluent;
 using Credo.Domain.Aggregates;
 using Credo.Domain.RepositoriesContracts;
 using Credo.Infrastructure.Repositories;
+using Credo.API.Modules.Auth.Validatos;
+using System.Text.Json.Serialization;
+using Credo.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,12 +26,6 @@ builder.Host.UseSerilog((context, loggerConfig) =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
-
-Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-            .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Minute)
-            .CreateLogger();
 
 builder.Services.AddAuthentication(x =>
 {
@@ -62,7 +59,9 @@ builder.Services.AddScoped<LoanApplicationsService>();
 builder.Services.AddScoped<LoanApplicationAggregate>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(x =>
 {
@@ -76,9 +75,12 @@ builder.Services.AddSwaggerGen(x =>
     x.OperationFilter<SecurityRequirementsOperationFilter>();
     x.DescribeAllParametersInCamelCase();
     x.SwaggerDoc("v1", new OpenApiInfo { Title = "CREDO API", Version = "v1" });
+    x.SchemaFilter<EnumSchema>();
 });
 
 var app = builder.Build();
+
+app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
 app.UseSerilogRequestLogging();
 

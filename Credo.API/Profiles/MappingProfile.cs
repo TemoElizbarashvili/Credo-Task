@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Credo.API.Modules.User.Models;
 using Credo.API.Modules.Auth.Models;
+using Credo.API.Modules.LoanApplications.Models;
 using Credo.Common.Models;
 using Credo.Domain.Entities;
 
@@ -10,10 +11,16 @@ public class MappingProfile : Profile
 {
     public MappingProfile() 
     {
-        // Users Profile
+        // Users profile
         CreateMap<User, UserDto>();
         CreateMap<UserRegisterDto, User>();
         CreateMap<PagedList<User>, PagedList<UserDto>>();
         CreateMap<EditUserDto, User>();
+        CreateMap<User, UserForApplicationQueryDto>();
+
+        // Loan applications profile
+        CreateMap<CreateLoanApplicationDto, LoanApplication>();
+        CreateMap<LoanApplication, LoanApplicationQueryDto>()
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User)); ;
     }
 }
