@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Credo.Common\Credo.Common.csproj" />
     <ProjectReference Include="..\Credo.Domain\Credo.Domain.csproj" />
     <ProjectReference Include="..\Credo.Infrastructure\Credo.Infrastructure.csproj" />
   </ItemGroup>

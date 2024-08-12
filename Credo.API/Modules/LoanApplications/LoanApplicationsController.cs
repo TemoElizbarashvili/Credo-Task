@@ -10,6 +10,8 @@ using System.Security.Claims;
 using Credo.Application.Modules.LoanApplication.Commands;
 using Credo.Application.Modules.LoanApplication.Queries;
 using Credo.Domain.ValueObjects;
+using Credo.Infrastructure.Messaging;
+using Credo.Application.Modules.LoanApplication.Models;
 
 namespace Credo.API.Modules.LoanApplications;
 [Route("Loan-applications")]
@@ -75,6 +77,32 @@ public class LoanApplicationsController : ControllerBase
             return Conflict("Something unexpected happened, try again later.");
         }
 
+        return Ok();
+    }
+
+    [Authorize(Roles = "Manager")]
+    [HttpGet("get-applications")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<List<LoanApplicationMessageDto>>> GetApplications()
+    {
+        try
+        {
+            var messages = await _sender.Send(new GetApplicationsQuery());
+            return Ok(messages.Select(m => _mapper.Map<LoanApplicationMessageDto>(m)));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error occured while retrieving messages from rabbit. Exception: {@Exception}", ex);
+            return StatusCode(500, "Something went wrong. Try again later");
+        }
+    }
+
+    [Authorize(Roles = "Manager")]
+    [HttpPost("{id:int}/submit")]
+    public async Task<IActionResult> SubmitApplication([FromRoute] int id)
+    {
+        await _sender.Send(new SubmitApplicationCommand { Id = id });
         return Ok();
     }
 
