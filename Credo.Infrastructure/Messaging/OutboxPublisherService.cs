@@ -2,6 +2,7 @@
 using Credo.Domain.RepositoriesContracts;
 using Credo.Domain.Services;
 using Credo.Domain.ValueObjects;
+using Credo.Infrastructure.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -32,6 +33,7 @@ public class OutboxPublisherService : BackgroundService
             {
                 var outboxRepository = scope.ServiceProvider.GetRequiredService<IOutboxRepository>();
                 var loanApplicationService = scope.ServiceProvider.GetRequiredService<LoanApplicationsService>();
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
                 var unprocessedMessages = await outboxRepository.GetUnprocessedMessagesAsync(stoppingToken);
 
@@ -57,6 +59,7 @@ public class OutboxPublisherService : BackgroundService
                         _messageQueueService.Publish(deserializedMessage);
 
                         await outboxRepository.MarkAsProcessedAsync(message.Id, stoppingToken);
+                        await unitOfWork.SaveChangesAsync(stoppingToken);
                     }
                     catch (Exception ex)
                     {

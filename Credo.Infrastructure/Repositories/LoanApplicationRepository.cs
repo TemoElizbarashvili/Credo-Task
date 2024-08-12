@@ -38,11 +38,6 @@ public class LoanApplicationRepository : ILoanApplicationRepository
     public async Task UpdateAsync(LoanApplication loanApplication)
         => await Task.FromResult(_context.LoanApplications.Update(loanApplication));
 
-    public int GetNextId()
-        => _context.LoanApplications
-            .Select(x => (int?)x.Id)
-            .Max() ?? 0;
-
     public async Task<PagedList<LoanApplication>> ApplicationsPagedListAsync(int pageNumber, int pageSize, int? userId = null, string? currency = null,
         string? loanType = null, string? loanStatus = null, decimal? minAmount = null, decimal? maxAmount = null)
     {

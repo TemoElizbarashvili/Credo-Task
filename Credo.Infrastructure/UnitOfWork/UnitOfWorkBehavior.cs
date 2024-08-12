@@ -18,6 +18,11 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<
         {
             return await next();
         }
+        // Exception command, uses its own transaction
+        if (IsCreateApplicationCommand())
+        {
+            return await next();
+        }
 
         using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
@@ -34,4 +39,7 @@ public sealed class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<
     {
         return !typeof(TRequest).Name.EndsWith("Command");
     }
+
+    private static bool IsCreateApplicationCommand()
+        => string.Equals(typeof(TRequest).Name, "CreateLoanApplicationCommand", StringComparison.InvariantCultureIgnoreCase);
 }

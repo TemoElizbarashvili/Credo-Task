@@ -19,9 +19,6 @@ public class LoanApplicationAggregate
     public async Task CreateLoanApplicationAsync(LoanApplication loanApplication)
         => await _loanApplicationRepository.AddAsync(loanApplication);
 
-    public int GetNextId()
-        => _loanApplicationRepository.GetNextId();
-
     public async Task UpdateLoanApplicationStatusAsync(int loanApplicationId, LoanStatus newStatus)
     {
         var loanApplication = await _loanApplicationRepository.GetByIdAsync(loanApplicationId);
