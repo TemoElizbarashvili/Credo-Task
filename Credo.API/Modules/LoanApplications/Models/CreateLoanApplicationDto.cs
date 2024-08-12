@@ -17,7 +17,7 @@ public enum LoanTypeDto
     Auto = 1,
 
     [Display("Installment")]
-    Installemnt = 2
+    Installment = 2
 }
 
 

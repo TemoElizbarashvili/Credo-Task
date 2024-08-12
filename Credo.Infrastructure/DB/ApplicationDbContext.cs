@@ -1,5 +1,7 @@
 ﻿using Credo.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Credo.Domain.ValueObjects;
 
 namespace Credo.Infrastructure.DB;
 
@@ -7,6 +9,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<LoanApplication> LoanApplications { get; set; }
+    public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -25,5 +28,13 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LoanApplication>()
             .Property(l => l.Amount)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<LoanApplication>()
+            .Property(l => l.Status)
+            .HasConversion(new EnumToStringConverter<LoanStatus>());
+
+        modelBuilder.Entity<LoanApplication>()
+            .Property(l => l.LoanType)
+            .HasConversion(new EnumToStringConverter<LoanType>());
     }
 }

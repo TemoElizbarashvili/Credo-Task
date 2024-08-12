@@ -1,8 +1,8 @@
-﻿using RabbitMQ.Client;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
+using RabbitMQ.Client;
 
-namespace Credo.Infrastructure.Rabbit;
+namespace Credo.Infrastructure.Messaging;
 
 public interface IMessageQueueService
 {

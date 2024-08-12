@@ -64,9 +64,7 @@ public class LoanApplicationsController : ControllerBase
         }
 
         loanApplication.UserId = (int)userId;
-        loanApplication.Status = LoanStatus.InProgress;
-
-        var command = new CreateLoanApplicationCommand { LoanApplication = loanApplication };
+        var command = _mapper.Map<CreateLoanApplicationCommand>(loanApplication);
         try
         {
             await _sender.Send(command);

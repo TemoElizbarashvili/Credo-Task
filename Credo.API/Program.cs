@@ -1,32 +1,37 @@
-using Credo.Infrastructure.DB;
-using Credo.Infrastructure.UnitOfWork;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using System.Reflection;
-using System.Text;
 using Credo.API.Helpers;
-using Credo.Domain.Services;
+using Credo.API.Middleware;
+using Credo.API.Modules.Auth.Validatos;
 using Credo.Application.Modules.User.Handlers;
-using FluentValidation;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using Credo.Domain.Aggregates;
 using Credo.Domain.RepositoriesContracts;
+using Credo.Domain.Services;
+using Credo.Infrastructure.DB;
+using Credo.Infrastructure.Messaging;
 using Credo.Infrastructure.Repositories;
-using Credo.API.Modules.Auth.Validatos;
+using Credo.Infrastructure.UnitOfWork;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Serilog;
+using Swashbuckle.AspNetCore.Filters;
+using System.Reflection;
 using System.Text.Json.Serialization;
-using Credo.API.Middleware;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.ReadFrom.Configuration(context.Configuration));
 
+// Configure DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection")));
 
+// Configure Authentication and Authorization
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -36,7 +41,6 @@ builder.Services.AddAuthentication(x =>
 {
     x.TokenValidationParameters = new TokenValidationParameters
     {
-        // For Simplicity, Disable Validators
         ValidateIssuer = false,
         ValidateAudience = false,
         ValidateLifetime = false,
@@ -46,19 +50,34 @@ builder.Services.AddAuthentication(x =>
 });
 builder.Services.AddAuthorization();
 
+// Configure Mediator, Validators, AutoMapper
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(Assembly.GetAssembly(typeof(GetUserByIdQueryHandler))!);
-
     cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
 });
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Configure RabbitMQ services
+builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqConfiguration"));
+builder.Services.AddSingleton<IMessageQueueService>(sp =>
+{
+    var config = sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value;
+    return new RabbitMQService(config);
+});
+builder.Services.AddSingleton<IHostedService, OutboxPublisherService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<OutboxPublisherService>());
+
+// Register other services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<LoanApplicationsService>();
+builder.Services.AddScoped<IOutboxRepository, OutboxRepository>();
 builder.Services.AddScoped<LoanApplicationAggregate>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILoanApplicationRepository, LoanApplicationRepository>();
+
+// Configure MVC and Swagger
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -80,8 +99,8 @@ builder.Services.AddSwaggerGen(x =>
 
 var app = builder.Build();
 
+// Configure middleware
 app.UseMiddleware<RequestResponseLoggingMiddleware>();
-
 app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
@@ -91,13 +110,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
-
-// For Simplicity, Allow Any CORS
+// Allow any CORS policy
 app.UseCors(policy =>
 {
     policy.WithOrigins();
@@ -106,5 +122,5 @@ app.UseCors(policy =>
         .AllowAnyOrigin();
 });
 
-
+app.MapControllers();
 app.Run();

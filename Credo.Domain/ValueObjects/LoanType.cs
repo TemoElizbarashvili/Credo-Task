@@ -4,5 +4,5 @@ public enum LoanType
 {
     Fast,
     Auto,
-    Installemnt
+    Installment
 }

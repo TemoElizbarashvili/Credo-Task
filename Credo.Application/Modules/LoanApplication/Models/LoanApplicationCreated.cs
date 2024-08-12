@@ -1,10 +1,10 @@
 ﻿using Credo.Domain.ValueObjects;
-using MediatR;
 
-namespace Credo.Application.Modules.LoanApplication.Commands;
+namespace Credo.Application.Modules.LoanApplication.Models;
 
-public class CreateLoanApplicationCommand : IRequest
+public class LoanApplicationCreated
 {
+    public int Id { get; set; }
     public LoanType LoanType { get; set; }
     public decimal Amount { get; set; }
     public required string Currency { get; set; }

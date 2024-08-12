@@ -14,7 +14,7 @@ public class LoanApplication
     //Relations
 
     public int UserId { get; set; }
-    public required User User { get; set; }
+    public required User? User { get; set; }
 
     public void UpdateStatus(LoanStatus newStatus)
     {
