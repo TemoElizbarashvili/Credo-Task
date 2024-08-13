@@ -28,6 +28,7 @@ public class SubmitApplicationCommandHandler : LoanApplicationBaseRequestHandler
         catch (Exception ex)
         {
             _logger.LogError("Error occurred while submitting application with Id {@Id}, Exception - {@Exception}", request.Id, ex);
+            throw;
         }
     }
 }

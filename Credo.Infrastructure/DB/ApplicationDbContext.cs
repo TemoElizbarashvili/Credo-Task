@@ -1,7 +1,7 @@
-﻿using Credo.Domain.Entities;
+﻿using Credo.Common.Models;
+using Credo.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Credo.Domain.ValueObjects;
 
 namespace Credo.Infrastructure.DB;
 

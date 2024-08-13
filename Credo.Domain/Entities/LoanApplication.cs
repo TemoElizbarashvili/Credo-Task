@@ -1,5 +1,4 @@
 ﻿using Credo.Common.Models;
-using Credo.Domain.ValueObjects;
 
 namespace Credo.Domain.Entities;
 

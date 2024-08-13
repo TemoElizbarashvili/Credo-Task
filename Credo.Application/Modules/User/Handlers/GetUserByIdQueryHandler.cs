@@ -21,6 +21,7 @@ public class GetUserByIdQueryHandler : UserRequestsHandlerBase, IRequestHandler<
         catch (Exception ex)
         {
             Log.Error($"Exception Happened while getting User. User Id: {request.Id}, Message: {ex.Message}");
+            throw;
         }
         return null;
     }

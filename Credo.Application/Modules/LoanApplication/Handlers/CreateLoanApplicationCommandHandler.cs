@@ -26,7 +26,7 @@ public class CreateLoanApplicationCommandHandler : LoanApplicationBaseRequestHan
         _unitOfWork = unitOfWork;
     }
 
-    public async Task Handle(CreateLoanApplicationCommand request, CancellationToken cancellationToken)
+    public Task Handle(CreateLoanApplicationCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -50,6 +50,9 @@ public class CreateLoanApplicationCommandHandler : LoanApplicationBaseRequestHan
         catch (Exception ex)
         {
             _logger.LogError("Error while adding outbox message in database, in CreateLoanApplicationCommand, {@Exception}", ex);
+            throw;
         }
+
+        return Task.CompletedTask;
     }
 }

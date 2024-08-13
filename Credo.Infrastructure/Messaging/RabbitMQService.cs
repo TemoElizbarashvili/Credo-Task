@@ -57,6 +57,6 @@ public class RabbitMQService : IMessageQueueService
             onMessage(message!);
         };
 
-        channel.BasicConsume(queue: _config.QueueName, autoAck: false, consumer: consumer);
+        channel.BasicConsume(queue: _config.QueueName, autoAck: true, consumer: consumer);
     }
 }

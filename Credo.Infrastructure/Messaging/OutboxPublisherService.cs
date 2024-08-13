@@ -1,8 +1,5 @@
 ﻿using System.Text.Json;
-using Credo.Common.Models;
 using Credo.Domain.RepositoriesContracts;
-using Credo.Domain.Services;
-using Credo.Domain.ValueObjects;
 using Credo.Infrastructure.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +30,6 @@ public class OutboxPublisherService : BackgroundService
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var outboxRepository = scope.ServiceProvider.GetRequiredService<IOutboxRepository>();
-                var loanApplicationService = scope.ServiceProvider.GetRequiredService<LoanApplicationsService>();
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
                 var unprocessedMessages = await outboxRepository.GetUnprocessedMessagesAsync(stoppingToken);
@@ -54,9 +50,6 @@ public class OutboxPublisherService : BackgroundService
                             _logger.LogError("Failed to deserialize message data for message ID {@MessageId}", message.Id);
                             continue;
                         }
-                        var loanApplicationId = (int)messageType.GetProperty("Id")?.GetValue(deserializedMessage)!;
-                        await loanApplicationService.ProcessLoanApplicationAsync(loanApplicationId, LoanStatus.Sent);
-
                         _messageQueueService.Publish(deserializedMessage);
 
                         await outboxRepository.MarkAsProcessedAsync(message.Id, stoppingToken);
@@ -68,7 +61,6 @@ public class OutboxPublisherService : BackgroundService
                     }
                 }
             }
-
             await Task.Delay(TimeSpan.FromSeconds(20), stoppingToken);
         }
     }

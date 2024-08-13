@@ -17,7 +17,9 @@ public class CreateUserCommandHandler : UserRequestsHandlerBase, IRequestHandler
         }
         catch (Exception ex)
         {
+            //TODO: add ILogger in base class and use it instead!!!
             Log.Error($"Exception Happened while creating User. Message: {ex.Message}");
+            throw;
         }
 
         return request.User.Id;
