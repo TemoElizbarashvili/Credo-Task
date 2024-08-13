@@ -1,7 +1,7 @@
 ﻿using Credo.Application.Modules.LoanApplication.Commands;
-using Credo.Application.Modules.LoanApplication.Models;
+using Credo.Common.Models;
 using Credo.Domain.Services;
-using Credo.Domain.ValueObjects;
+using Microsoft.Extensions.Logging;
 using Credo.Infrastructure.Messaging;
 using MediatR;
 
@@ -11,25 +11,23 @@ public class SubmitApplicationCommandHandler : LoanApplicationBaseRequestHandler
 {
     private readonly IMessageQueueService _messageQueueService;
 
-    public SubmitApplicationCommandHandler(IMessageQueueService messageQueueService, LoanApplicationsService loanApplicationsService) : base(loanApplicationsService)
+    public SubmitApplicationCommandHandler(
+        IMessageQueueService messageQueueService, 
+        LoanApplicationsService loanApplicationsService,
+        ILogger<LoanApplicationBaseRequestHandler> logger) : base(loanApplicationsService, logger)
     {
         _messageQueueService = messageQueueService;
     }
 
     public async Task Handle(SubmitApplicationCommand request, CancellationToken cancellationToken)
     {
-        var founded = false;
-        _messageQueueService.Consume<LoanApplicationCreated>( (message, ea) =>
-        {
-            if (request.Id == message.Id)
-            {
-                founded = true;
-                _messageQueueService.Ack(ea.DeliveryTag);
-            }
-        });
-        if (founded)
+        try
         {
             await _loanApplicationsService.ProcessLoanApplicationAsync(request.Id, LoanStatus.Submitted);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error occurred while submitting application with Id {@Id}, Exception - {@Exception}", request.Id, ex);
         }
     }
 }

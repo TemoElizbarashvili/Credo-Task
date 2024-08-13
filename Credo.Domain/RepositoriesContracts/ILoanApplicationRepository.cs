@@ -9,13 +9,8 @@ public interface ILoanApplicationRepository
     Task<LoanApplication?> GetByIdAsync(int id, bool withUser = false);
     Task UpdateAsync(LoanApplication loanApplication);
 
-    public Task<PagedList<LoanApplication>> ApplicationsPagedListAsync(
-        int pageNumber,
-        int pageSize,
-        int? userId = null,
-        string? currency = null,
-        string? loanType = null,
-        string? loanStatus = null,
-        decimal? minAmount = null,
-        decimal? maxAmount = null);
+    Task AddRangeAsync(IEnumerable<LoanApplication> applications);
+
+    public Task<PagedList<LoanApplication>> ApplicationsPagedListAsync(LoanApplicationQueryParameters query,
+        bool withUser = false);
 }

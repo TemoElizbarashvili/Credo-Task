@@ -68,6 +68,7 @@ builder.Services.AddSingleton<IMessageQueueService>(sp =>
 });
 builder.Services.AddSingleton<IHostedService, OutboxPublisherService>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<OutboxPublisherService>());
+builder.Services.AddHostedService<OutboxConsumerService>();
 
 // Register other services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

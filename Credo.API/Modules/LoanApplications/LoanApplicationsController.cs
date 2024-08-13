@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using Credo.API.Helpers;
 using Credo.API.Modules.LoanApplications.Models;
 using Credo.Domain.Entities;
@@ -9,9 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Credo.Application.Modules.LoanApplication.Commands;
 using Credo.Application.Modules.LoanApplication.Queries;
+using Credo.Common.Models;
 using Credo.Domain.ValueObjects;
 using Credo.Infrastructure.Messaging;
-using Credo.Application.Modules.LoanApplication.Models;
 
 namespace Credo.API.Modules.LoanApplications;
 [Route("Loan-applications")]
@@ -84,12 +85,48 @@ public class LoanApplicationsController : ControllerBase
     [HttpGet("get-applications")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<List<LoanApplicationMessageDto>>> GetApplications()
+    public async Task<ActionResult<List<LoanApplicationListItemDto>>> GetApplications(
+        [FromQuery, Required] int pageNumber,
+        [FromQuery, Required] int pageSize,
+        [FromQuery] int? userId = null,
+        [FromQuery] string? currency = null,
+        [FromQuery] string? loanType = null,
+        [FromQuery] string? loanStatus = null,
+        [FromQuery] decimal? minAmount = null,
+        [FromQuery] decimal? maxAmount = null)
     {
         try
         {
-            var messages = await _sender.Send(new GetApplicationsQuery());
-            return Ok(messages.Select(m => _mapper.Map<LoanApplicationMessageDto>(m)));
+            var command = new GetApplicationsQuery
+            {
+                Query = new LoanApplicationQueryParameters
+                {
+                    Currency = currency,
+                    LoanStatus = loanStatus,
+                    MinAmount = minAmount,
+                    MaxAmount = maxAmount,
+                    UserId = userId,
+                    LoanType = loanType,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                }
+            };
+            var applicationsPagedList = await _sender.Send(command);
+            var dtoList = applicationsPagedList?.Items
+                .Select(x => new LoanApplicationListItemDto(
+                    x.Id,
+                    x.LoanType,
+                    x.Amount,
+                    x.Currency,
+                    x.Period,
+                    x.UserId,
+                    x.Status,
+                    new ApplicationAuthorDetailsDto(x.User?.FirstName, x.User?.LastName, x.User?.PersonalNumber))
+            );
+            var result = new PagedList<LoanApplicationListItemDto>(dtoList!, applicationsPagedList!.TotalCount,
+                applicationsPagedList.PageNumber, applicationsPagedList.PageSize);
+
+            return Ok(result);
         }
         catch (Exception ex)
         {
@@ -97,6 +134,7 @@ public class LoanApplicationsController : ControllerBase
             return StatusCode(500, "Something went wrong. Try again later");
         }
     }
+
 
     [Authorize(Roles = "Manager")]
     [HttpPost("{id:int}/submit")]

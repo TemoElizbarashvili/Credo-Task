@@ -1,4 +1,5 @@
-﻿using Credo.Domain.ValueObjects;
+﻿using Credo.Common.Models;
+using Credo.Domain.ValueObjects;
 using MediatR;
 
 namespace Credo.Application.Modules.LoanApplication.Commands;
