@@ -1,4 +1,4 @@
-﻿namespace Credo.Domain.ValueObjects;
+﻿namespace Credo.Common.Models;
 
 public enum LoanType
 {

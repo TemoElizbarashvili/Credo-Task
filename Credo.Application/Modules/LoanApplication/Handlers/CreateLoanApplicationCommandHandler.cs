@@ -1,13 +1,12 @@
 ﻿using System.Text.Json;
 using Credo.Application.Modules.LoanApplication.Commands;
-using Credo.Application.Modules.LoanApplication.Models;
-using Credo.Common.Helpers;
+using Credo.Common.Models;
 using Credo.Domain.Entities;
 using Credo.Domain.RepositoriesContracts;
 using Credo.Domain.Services;
-using Credo.Domain.ValueObjects;
 using Credo.Infrastructure.UnitOfWork;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Credo.Application.Modules.LoanApplication.Handlers;
 
@@ -19,7 +18,9 @@ public class CreateLoanApplicationCommandHandler : LoanApplicationBaseRequestHan
 
     public CreateLoanApplicationCommandHandler(
         LoanApplicationsService loanApplicationsService,
-        IOutboxRepository outboxRepository, IUnitOfWork unitOfWork) : base(loanApplicationsService)
+        IOutboxRepository outboxRepository,
+        IUnitOfWork unitOfWork,
+        ILogger<LoanApplicationBaseRequestHandler> logger) : base(loanApplicationsService, logger)
     {
         _outboxRepository = outboxRepository;
         _unitOfWork = unitOfWork;
@@ -27,25 +28,8 @@ public class CreateLoanApplicationCommandHandler : LoanApplicationBaseRequestHan
 
     public async Task Handle(CreateLoanApplicationCommand request, CancellationToken cancellationToken)
     {
-        await _unitOfWork.BeginTransactionAsync(cancellationToken);
         try
         {
-
-            var loanApplication = new Domain.Entities.LoanApplication
-            {
-                UserId = request.UserId,
-                Currency = request.Currency,
-                Amount = request.Amount,
-                Status = LoanStatus.InProgress,
-                LoanType = request.LoanType,
-                Period = request.Period,
-                User = null
-            };
-
-
-            await _loanApplicationsService.CreateLoanApplicationAsync(loanApplication);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
             var outboxMessage = new OutboxMessage
             {
                 Id = Guid.NewGuid(),
@@ -59,17 +43,13 @@ public class CreateLoanApplicationCommandHandler : LoanApplicationBaseRequestHan
                     LoanType = request.LoanType,
                     Period = request.Period,
                     Amount = request.Amount,
-                    Id = loanApplication.Id
                 }),
             };
             _outboxRepository.Add(outboxMessage);
-
-            await _unitOfWork.CommitTransactionAsync(cancellationToken);
         }
-        catch
+        catch (Exception ex)
         {
-            await _unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
+            _logger.LogError("Error while adding outbox message in database, in CreateLoanApplicationCommand, {@Exception}", ex);
         }
     }
 }

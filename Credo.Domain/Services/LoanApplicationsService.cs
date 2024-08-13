@@ -1,6 +1,6 @@
-﻿using Credo.Domain.Aggregates;
+﻿using Credo.Common.Models;
+using Credo.Domain.Aggregates;
 using Credo.Domain.Entities;
-using Credo.Domain.ValueObjects;
 
 namespace Credo.Domain.Services;
 
@@ -13,6 +13,12 @@ public class LoanApplicationsService
     {
         _loanApplicationAggregate = loanApplicationAggregate;
     }
+
+    public async Task<PagedList<LoanApplication>> ApplicationsPagedListAsync(LoanApplicationQueryParameters query, bool withUser = false)
+        => await _loanApplicationAggregate.ApplicationsPagedListAsync(query, withUser);
+
+    public async Task AddRangeAsync(IEnumerable<LoanApplication> loanApplications)
+        => await _loanApplicationAggregate.AddRangeAsync(loanApplications);
 
     public async Task<LoanApplication?> GetByIdAsync(int id, bool withUser = false)
         => await _loanApplicationAggregate.GetByIdAsync(id, withUser);

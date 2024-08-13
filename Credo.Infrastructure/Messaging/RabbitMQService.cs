@@ -8,7 +8,7 @@ namespace Credo.Infrastructure.Messaging;
 public interface IMessageQueueService
 {
     void Publish<T>(T message);
-    public void Consume<T>(Action<T, BasicDeliverEventArgs> onMessage);
+    public void Consume<T>(Action<T> onMessage);
 }
 
 public class RabbitMQService : IMessageQueueService
@@ -39,7 +39,7 @@ public class RabbitMQService : IMessageQueueService
             basicProperties: null);
     }
 
-    public void Consume<T>(Action<T, BasicDeliverEventArgs> onMessage)
+    public void Consume<T>(Action<T> onMessage)
     {
         var factory = new ConnectionFactory() { HostName = _config.HostName };
         using var connection = factory.CreateConnection();
@@ -54,7 +54,7 @@ public class RabbitMQService : IMessageQueueService
         {
             var body = ea.Body.ToArray();
             var message = JsonSerializer.Deserialize<T>(Encoding.UTF8.GetString(body));
-            onMessage(message!, ea);
+            onMessage(message!);
         };
 
         channel.BasicConsume(queue: _config.QueueName, autoAck: false, consumer: consumer);

@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Credo.Common.Models;
 using Credo.Domain.RepositoriesContracts;
 using Credo.Domain.Services;
 using Credo.Domain.ValueObjects;

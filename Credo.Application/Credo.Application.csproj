@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Modules\LoanApplication\Models\" />
     <Folder Include="Modules\Shared\" />
   </ItemGroup>
 

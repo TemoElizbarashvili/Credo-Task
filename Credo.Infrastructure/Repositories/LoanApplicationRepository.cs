@@ -1,7 +1,6 @@
 ﻿using Credo.Common.Models;
 using Credo.Domain.Entities;
 using Credo.Domain.RepositoriesContracts;
-using Credo.Domain.ValueObjects;
 using Credo.Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,42 +37,48 @@ public class LoanApplicationRepository : ILoanApplicationRepository
     public async Task UpdateAsync(LoanApplication loanApplication)
         => await Task.FromResult(_context.LoanApplications.Update(loanApplication));
 
-    public async Task<PagedList<LoanApplication>> ApplicationsPagedListAsync(int pageNumber, int pageSize, int? userId = null, string? currency = null,
-        string? loanType = null, string? loanStatus = null, decimal? minAmount = null, decimal? maxAmount = null)
+    public async Task AddRangeAsync(IEnumerable<LoanApplication> applications)
+        => await _context.LoanApplications.AddRangeAsync(applications);
+
+    public async Task<PagedList<LoanApplication>> ApplicationsPagedListAsync(LoanApplicationQueryParameters query, bool withUser = false)
     {
         var totalItems = await _context.LoanApplications.CountAsync();
 
         var applications = _context.LoanApplications.AsQueryable();
-        if (userId is not null)
+        if (withUser)
         {
-            applications = applications.Where(a => a.UserId == userId);
+            applications = applications.Include(a => a.User);
         }
-        if (!string.IsNullOrEmpty(currency))
+        if (query.UserId is not null)
         {
-            applications = applications.Where(a => a.Currency == currency);
+            applications = applications.Where(a => a.UserId == query.UserId);
         }
-        if (!string.IsNullOrEmpty(loanType))
+        if (!string.IsNullOrEmpty(query.Currency))
         {
-            applications = applications.Where(a => a.LoanType == (LoanType)Enum.Parse(typeof(LoanType), loanType));
+            applications = applications.Where(a => a.Currency == query.Currency);
         }
-        if (!string.IsNullOrEmpty(loanStatus))
+        if (!string.IsNullOrEmpty(query.LoanType))
         {
-            applications = applications.Where(a => a.Status == (LoanStatus)Enum.Parse(typeof(LoanStatus), loanStatus));
+            applications = applications.Where(a => a.LoanType == (LoanType)Enum.Parse(typeof(LoanType), query.LoanType));
         }
-        if (minAmount is not null)
+        if (!string.IsNullOrEmpty(query.LoanStatus))
         {
-            applications = applications.Where(a => a.Amount >= minAmount);
+            applications = applications.Where(a => a.Status == (LoanStatus)Enum.Parse(typeof(LoanStatus), query.LoanStatus));
         }
-        if (maxAmount is not null)
+        if (query.MinAmount is not null)
         {
-            applications = applications.Where(a => a.Amount <= maxAmount);
+            applications = applications.Where(a => a.Amount >= query.MinAmount);
+        }
+        if (query.MaxAmount is not null)
+        {
+            applications = applications.Where(a => a.Amount <= query.MaxAmount);
         }
 
         var items = await applications
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
+            .Skip((query.PageNumber- 1) * query.PageSize)
+            .Take(query.PageSize)
             .ToListAsync();
 
-        return new PagedList<LoanApplication>(items, totalItems, pageNumber, pageSize);
+        return new PagedList<LoanApplication>(items, totalItems, query.PageNumber, query.PageSize);
     }
 }
