@@ -37,26 +37,5 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<LoanApplication>()
             .Property(l => l.LoanType)
             .HasConversion(new EnumToStringConverter<LoanType>());
-
-        var manager = CreateManager();
-        modelBuilder.Entity<User>().HasData(manager);
-    }
-    
-    //TODO: FIX seeding does not work now !
-    private static User CreateManager()
-    {
-        var password = BCrypt.Net.BCrypt.HashPassword("admin");
-        return new User
-        {
-            DateOfBirth = DateTime.Now.AddYears(-18),
-            FirstName = "Admin",
-            LastName = "Admin",
-            Password = password,
-            PersonalNumber = "00000000000",
-            UserName = "admin",
-            IsDeleted = false,
-            Role = UserRole.Manager.ToString(),
-            Id = -2
-        };
     }
 }
