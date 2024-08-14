@@ -12,5 +12,5 @@ public class GetApplicationByIdQueryHandler : LoanApplicationBaseRequestHandler,
         ILogger<LoanApplicationBaseRequestHandler> logger) : base(service, logger) { }
 
     public async Task<Domain.Entities.LoanApplication?> Handle(GetApplicationByIdQuery request, CancellationToken cancellationToken)
-        => await _loanApplicationsService.GetByIdAsync(request.Id, request.WithUser);
+        => await LoanApplicationsService.GetByIdAsync(request.Id, request.WithUser);
 }

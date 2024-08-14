@@ -17,11 +17,11 @@ public class SubmitApplicationCommandHandler : LoanApplicationBaseRequestHandler
     {
         try
         {
-            await _loanApplicationsService.ProcessLoanApplicationAsync(request.Id, LoanStatus.Submitted);
+            await LoanApplicationsService.ProcessLoanApplicationAsync(request.Id, LoanStatus.Submitted);
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error occurred while submitting application with Id {@Id}, Exception - {@Exception}", request.Id, ex);
+            Logger.LogError("Error occurred while submitting application with Id {@Id}, Exception - {@Exception}", request.Id, ex);
             throw;
         }
     }

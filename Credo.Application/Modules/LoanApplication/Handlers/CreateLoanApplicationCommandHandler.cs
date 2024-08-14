@@ -49,7 +49,7 @@ public class CreateLoanApplicationCommandHandler : LoanApplicationBaseRequestHan
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error while adding outbox message in database, in CreateLoanApplicationCommand, {@Exception}", ex);
+            Logger.LogError("Error while adding outbox message in database, in CreateLoanApplicationCommand, {@Exception}", ex);
             throw;
         }
 

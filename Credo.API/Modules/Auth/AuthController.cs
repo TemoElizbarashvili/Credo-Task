@@ -5,7 +5,9 @@ using Credo.Application.Modules.User.Commands;
 using Credo.Application.Modules.User.Queries;
 using Credo.Domain.ValueObjects;
 using FluentValidation;
+using FluentValidation.Results;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Credo.API.Modules.Auth;
@@ -50,27 +52,14 @@ public class AuthController : ControllerBase
     [ProducesResponseType(409)]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto, [FromServices] IValidator<UserRegisterDto> validator)
     {
-        // Only Manager can Add user with Role "Manager
-        if (userDto.Role == UserRole.Manager)
-        {
-            if (!User.IsInRole("Manager"))
-            {
-                return Forbid();
-            }
-        }
-
-        var validationResult = await validator.ValidateAsync(userDto);
-
-        if (!validationResult.IsValid)
+        var (user, validationResult) = await CreateUser(userDto, validator, UserRole.Customer);
+        if (user is null && validationResult is not null)
         {
             return new ValidationBadRequestResponse(validationResult, _logger);
         }
-
-        var user = _mapper.Map<Domain.Entities.User>(userDto);
-        user.Password = await AuthHelper.HashPasswordAsync(user.Password);
         try
         {
-            await _sender.Send(new CreateUserCommand { User = user });
+            await _sender.Send(new CreateUserCommand { User = user! });
         }
         catch (Exception ex)
         {
@@ -79,6 +68,47 @@ public class AuthController : ControllerBase
 
         return Ok();
     }
+
+    [Authorize(Roles = "Manager")]
+    [HttpPost("Register-manager")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    public async Task<IActionResult> RegisterManager([FromBody] UserRegisterDto userDto, [FromServices] IValidator<UserRegisterDto> validator)
+    {
+        var (user, validationResult) = await CreateUser(userDto, validator, UserRole.Manager);
+        if (user is null && validationResult is not null)
+        {
+            return new ValidationBadRequestResponse(validationResult, _logger);
+        }
+        try
+        {
+            await _sender.Send(new CreateUserCommand { User = user! });
+        }
+        catch (Exception ex)
+        {
+            return Conflict(new { message = ex.InnerException });
+        }
+
+        return Ok();
+    }
+
+    private async Task<(Domain.Entities.User?, ValidationResult?)> CreateUser(UserRegisterDto userDto,
+        IValidator<UserRegisterDto> validator, UserRole userRole)
+    {
+        var validationResult = await validator.ValidateAsync(userDto);
+
+        if (!validationResult.IsValid)
+        {
+            return (null, validationResult);
+        }
+
+        var user = _mapper.Map<Domain.Entities.User>(userDto);
+        user.Password = await AuthHelper.HashPasswordAsync(user.Password);
+        user.Role = userRole.ToString();
+        return (user, null);
+    }
+
 
     [HttpPatch("Change-password")]
     [ProducesResponseType(200)]

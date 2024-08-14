@@ -5,15 +5,15 @@ namespace Credo.Application.Modules.LoanApplication.Handlers;
 
 public class LoanApplicationBaseRequestHandler
 {
-    protected readonly LoanApplicationsService _loanApplicationsService;
-    protected readonly ILogger<LoanApplicationBaseRequestHandler> _logger;
+    protected readonly LoanApplicationsService LoanApplicationsService;
+    protected readonly ILogger<LoanApplicationBaseRequestHandler> Logger;
 
     public LoanApplicationBaseRequestHandler(
         LoanApplicationsService loanApplicationsService,
         ILogger<LoanApplicationBaseRequestHandler> logger)
     {
-        _loanApplicationsService = loanApplicationsService;
-        _logger = logger;
+        LoanApplicationsService = loanApplicationsService;
+        Logger = logger;
     }
 
 }

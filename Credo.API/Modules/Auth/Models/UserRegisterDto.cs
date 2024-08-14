@@ -1,6 +1,4 @@
-﻿using Credo.Domain.ValueObjects;
-
-namespace Credo.API.Modules.Auth.Models;
+﻿namespace Credo.API.Modules.Auth.Models;
 
 public class UserRegisterDto
 {
@@ -10,5 +8,4 @@ public class UserRegisterDto
     public required string Password { get; set; }
     public required string PersonalNumber { get; set; }
     public required DateTime DateOfBirth { get; set; }
-    public required UserRole Role { get; set; }
 }

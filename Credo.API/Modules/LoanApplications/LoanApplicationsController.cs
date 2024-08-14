@@ -11,10 +11,9 @@ using System.Security.Claims;
 using Credo.Application.Modules.LoanApplication.Commands;
 using Credo.Application.Modules.LoanApplication.Queries;
 using Credo.Common.Models;
-using Credo.Domain.ValueObjects;
-using Credo.Infrastructure.Messaging;
 
 namespace Credo.API.Modules.LoanApplications;
+
 [Route("Loan-applications")]
 [ApiController]
 [Authorize]
@@ -137,10 +136,46 @@ public class LoanApplicationsController : ControllerBase
 
 
     [Authorize(Roles = "Manager")]
-    [HttpPost("{id:int}/submit")]
+    [HttpPost("{id:int}/Submit")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> SubmitApplication([FromRoute] int id)
     {
-        await _sender.Send(new SubmitApplicationCommand { Id = id });
+        try
+        {
+            await _sender.Send(new SubmitApplicationCommand { Id = id });
+        }
+        catch (ArgumentNullException)
+        {
+            return BadRequest("Application with provided ID can not be found!");
+        }
+        catch
+        {
+            return StatusCode(500, "Something went wrong, try again later.");
+        }
+        return Ok();
+    }
+
+    [Authorize(Roles = "Manager")]
+    [HttpPost("{id:int}/Decline")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<IActionResult> DeclineApplication([FromRoute] int id)
+    {
+        try
+        {
+            await _sender.Send(new DeclineApplicationCommand { Id = id });
+        }
+        catch (ArgumentNullException)
+        {
+            return BadRequest("Application with provided ID can not be found!");
+        }
+        catch
+        {
+            return StatusCode(500, "Something went wrong, try again later.");
+        }
         return Ok();
     }
 

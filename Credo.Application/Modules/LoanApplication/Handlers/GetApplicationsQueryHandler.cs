@@ -18,12 +18,12 @@ public class GetApplicationsQueryHandler : LoanApplicationBaseRequestHandler, IR
     {
         try
         {
-            var applications = await _loanApplicationsService.ApplicationsPagedListAsync(request.Query, true);
+            var applications = await LoanApplicationsService.ApplicationsPagedListAsync(request.Query, true);
             return applications;
         }
         catch (Exception ex)
         {
-            _logger.LogError("Error occurred while retrieving loan applications in handler, Exception - {@Exception}", ex);
+            Logger.LogError("Error occurred while retrieving loan applications in handler, Exception - {@Exception}", ex);
         }
 
         return null;
