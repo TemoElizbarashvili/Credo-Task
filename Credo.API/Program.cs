@@ -12,7 +12,6 @@ using Credo.Infrastructure.UnitOfWork;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -20,6 +19,7 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using System.Text;
+using Credo.Infrastructure.EventProcessing;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,14 +61,10 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Configure RabbitMQ services
 builder.Services.Configure<RabbitMqConfiguration>(builder.Configuration.GetSection("RabbitMqConfiguration"));
-builder.Services.AddSingleton<IMessageQueueService>(sp =>
-{
-    var config = sp.GetRequiredService<IOptions<RabbitMqConfiguration>>().Value;
-    return new RabbitMQService(config);
-});
 builder.Services.AddSingleton<IHostedService, OutboxPublisherService>();
 builder.Services.AddHostedService(sp => sp.GetRequiredService<OutboxPublisherService>());
 builder.Services.AddHostedService<OutboxConsumerService>();
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
 // Register other services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

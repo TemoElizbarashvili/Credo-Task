@@ -1,13 +1,16 @@
 ﻿using Credo.Domain.RepositoriesContracts;
+using Microsoft.Extensions.Logging;
 
 namespace Credo.Application.Modules.User.Handlers;
 
 public class UserRequestsHandlerBase
 {
-    protected readonly IUserRepository _userRepository;
+    protected readonly IUserRepository UserRepository;
+    protected readonly ILogger<UserRequestsHandlerBase> Logger;
 
-    public UserRequestsHandlerBase(IUserRepository userRepository)
+    public UserRequestsHandlerBase(IUserRepository userRepository, ILogger<UserRequestsHandlerBase> logger)
     {
-        _userRepository = userRepository;
+        UserRepository = userRepository;
+        Logger = logger;
     }
 }

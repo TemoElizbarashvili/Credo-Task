@@ -9,14 +9,9 @@ namespace Credo.Application.Modules.LoanApplication.Handlers;
 
 public class GetApplicationsQueryHandler : LoanApplicationBaseRequestHandler, IRequestHandler<GetApplicationsQuery, PagedList<Domain.Entities.LoanApplication>?>
 {
-    private readonly IMessageQueueService _messageQueueService;
 
-    public GetApplicationsQueryHandler(
-        IMessageQueueService messageQueueService,
-        LoanApplicationsService loanApplicationsService,
-        ILogger<LoanApplicationBaseRequestHandler> logger) : base(loanApplicationsService, logger)
+    public GetApplicationsQueryHandler(LoanApplicationsService loanApplicationsService, ILogger<LoanApplicationBaseRequestHandler> logger) : base(loanApplicationsService, logger)
     {
-        _messageQueueService = messageQueueService;
     }
 
     public async Task<PagedList<Domain.Entities.LoanApplication>?> Handle(GetApplicationsQuery request, CancellationToken cancellationToken)

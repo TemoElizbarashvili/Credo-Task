@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Credo.Domain.RepositoriesContracts;
+using Credo.Infrastructure.EventProcessing;
 using Credo.Infrastructure.UnitOfWork;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,17 +11,17 @@ namespace Credo.Infrastructure.Messaging;
 public class OutboxPublisherService : BackgroundService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly IMessageQueueService _messageQueueService;
+    private readonly IEventProcessor _eventProcessor;
     private readonly ILogger<OutboxPublisherService> _logger;
 
     public OutboxPublisherService(
         IServiceScopeFactory serviceScopeFactory,
-        IMessageQueueService messageQueueService,
-        ILogger<OutboxPublisherService> logger)
+        ILogger<OutboxPublisherService> logger,
+        IEventProcessor eventProcessor)
     {
         _serviceScopeFactory = serviceScopeFactory;
-        _messageQueueService = messageQueueService;
         _logger = logger;
+        _eventProcessor = eventProcessor;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -50,7 +51,7 @@ public class OutboxPublisherService : BackgroundService
                             _logger.LogError("Failed to deserialize message data for message ID {@MessageId}", message.Id);
                             continue;
                         }
-                        _messageQueueService.Publish(deserializedMessage);
+                        _eventProcessor.Publish(deserializedMessage);
 
                         await outboxRepository.MarkAsProcessedAsync(message.Id, stoppingToken);
                         await unitOfWork.SaveChangesAsync(stoppingToken);

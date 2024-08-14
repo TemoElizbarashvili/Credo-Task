@@ -2,21 +2,15 @@
 using Credo.Common.Models;
 using Credo.Domain.Services;
 using Microsoft.Extensions.Logging;
-using Credo.Infrastructure.Messaging;
 using MediatR;
 
 namespace Credo.Application.Modules.LoanApplication.Handlers;
 
 public class SubmitApplicationCommandHandler : LoanApplicationBaseRequestHandler, IRequestHandler<SubmitApplicationCommand>
 {
-    private readonly IMessageQueueService _messageQueueService;
 
-    public SubmitApplicationCommandHandler(
-        IMessageQueueService messageQueueService, 
-        LoanApplicationsService loanApplicationsService,
-        ILogger<LoanApplicationBaseRequestHandler> logger) : base(loanApplicationsService, logger)
+    public SubmitApplicationCommandHandler(LoanApplicationsService loanApplicationsService, ILogger<LoanApplicationBaseRequestHandler> logger) : base(loanApplicationsService, logger)
     {
-        _messageQueueService = messageQueueService;
     }
 
     public async Task Handle(SubmitApplicationCommand request, CancellationToken cancellationToken)
